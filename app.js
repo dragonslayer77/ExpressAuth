@@ -4,6 +4,8 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const sassMiddleware = require('node-sass-middleware');
+const passport = require('passport');
+const session = require('express-session');
 
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
@@ -28,6 +30,18 @@ app.use(sassMiddleware({
   sourceMap: true
 }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// use sessions and passport
+app.use(session({
+  secret: 'keyboard cat',
+  resave: true,
+  saveUninitialized: true
+ }));
+ app.use(passport.initialize());
+ app.use(passport.session());
+ // config passport:
+ require('./services/passport');
+
 
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
